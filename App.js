@@ -1,58 +1,26 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+// アプリケーションの最上レベルのコンポーネントを定義するクラス
 
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+// Navigator
+import AppNavigator from './src/components/AppNavigator'
+// redux
+import { Provider } from 'react-redux';
+import store, { persistor } from './src/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-type Props = {};
 export default class App extends Component<Props> {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
+      // Providerを最上位とする意図は以下2つ。
+      //  ・Reactコンポーネント内でreact-reduxのconnect()関数を使えるようにする
+      //  ・ラップしたコンポーネントにstore情報を渡す
+      <Provider store={ store }>
+        {/* storeをStorageに保存するためのコンポーネント */}
+        <PersistGate loading={null} persistor={persistor}>
+          {/* 画面遷移するためのコンポーネント */}
+          <AppNavigator />
+        </PersistGate>
+      </Provider>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
